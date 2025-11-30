@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Home</title>
+</head>
+<body>
+  <header>
+    <h1>Student System</h1>
+     <% if (locals.currentUser) { %>
+      <p>Signed in as <strong><%= currentUser.username %></strong> (<%= currentUser.role %>)</p>
+      <form action="/logout" method="POST" style="display:inline">
+        <button type="submit">Logout</button>
+      </form>
+      <% if (currentUser.role === 'admin') { %>
+        <p><a href="/admin">Admin panel</a></p>
+      <% } %>
+    <% } else { %>
+      <p><a href="/login">Login</a> | <a href="/register">Register</a></p>
+    <% } %>
+    <hr/>
+  </header>
+
+  <main>
+    <h2>Welcome</h2>
+    <p>Use the navigation to manage students and view data.</p>
+  </main>
+</body>
+</html>

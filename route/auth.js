@@ -20,12 +20,12 @@ router.post('/login', async (req, res, next) => {
   try {
     const user = await User.findOne({ username, isActive: true });
     if (!user) {
-      return res.status(401).render('auth/login', { error: 'Invalid credentials' });
+      return res.status(401).render('auth/login', { error: 'Invalid credentials (username not found)' });
     }
 
     const passwordOk = await bcrypt.compare(password, user.passwordHash);
     if (!passwordOk) {
-      return res.status(401).render('auth/login', { error: 'Invalid credentials' });
+      return res.status(401).render('auth/login', { error: 'Invalid credentials (password is incorrect)' });
     }
 
     // store user id in session

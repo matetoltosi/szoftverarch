@@ -11,6 +11,7 @@ module.exports = function (app) {
   });
 
   // domain routes - all require login
+  app.use('/admin', requireLogin, require('./admin'));
   app.use('/students', requireLogin, require('./student'));
   app.use('/teachers', requireLogin, require('./teacher'));
   app.use('/subjects', requireLogin, require('./subject'));
