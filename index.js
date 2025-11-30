@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const { loadUser } = require('./middleware/auth');
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/student-system', {
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/student-system';
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -40,7 +41,10 @@ require('./route/index')(app);
 // error handler
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).end('Problem...');
+  res.status(500).render('error', {
+    message: err.message,
+    error: req.app.get('env') === 'development' ? err : {}
+  });
 });
 
 app.listen(3000, () => {
