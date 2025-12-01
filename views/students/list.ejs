@@ -1,0 +1,39 @@
+<%- include('../partials/header', { title: 'Students' }) %>
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">Students</h1>
+    <!-- később ide jöhet "Add new" gomb, filter, stb. -->
+  </div>
+
+  <% if (!students || students.length === 0) { %>
+    <p>No students found.</p>
+  <% } else { %>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Neptun</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Program</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% students.forEach(function(student) { %>
+            <tr>
+              <td><%= student.neptunCode %></td>
+              <td><%= student.lastName %> <%= student.firstName %></td>
+              <td><%= student.email %></td>
+              <td><%= student.program %></td>
+              <td><%= student.status %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

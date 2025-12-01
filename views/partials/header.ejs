@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title || 'Student system' %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <a href="/" class="logo">Student System</a>
+
+        <% if (currentUser) { %>
+          <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/students">Students</a>
+            <a href="/teachers">Teachers</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/courses">Courses</a>
+          </nav>
+        <% } %>
+      </div>
+
+      <div class="topbar-right">
+        <% if (currentUser) { %>
+          <span class="user-info">
+            <strong><%= currentUser.username %></strong>
+            (<%= currentUser.role %>)
+          </span>
+          <form method="POST" action="/logout" class="logout-form">
+            <button type="submit">Logout</button>
+          </form>
+        <% } else { %>
+          <a href="/login" class="btn-primary">Login</a>
+        <% } %>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-container">
