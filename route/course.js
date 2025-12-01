@@ -1,10 +1,8 @@
-// route/subject.js
 const express = require('express');
 const router = express.Router();
 const Subject = require('../models/subject');
 const { requireRole } = require('../middleware/auth');
 
-// GET /subjects - list all subjects (admin + teacher)
 router.get('/', requireRole('admin', 'teacher'), async (req, res, next) => {
   try {
     const subjects = await Subject.find({ isActive: true }).populate('responsibleTeacher');
@@ -14,7 +12,6 @@ router.get('/', requireRole('admin', 'teacher'), async (req, res, next) => {
   }
 });
 
-// POST /subjects - create new subject (admin only)
 router.post('/', requireRole('admin'), async (req, res, next) => {
   try {
     const subject = new Subject(req.body);

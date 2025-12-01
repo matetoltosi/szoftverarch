@@ -1,0 +1,45 @@
+<%- include('../partials/header', { title: 'Kurzus részletei' })  %>
+
+<h1>Kurzus részletei</h1>
+<h2><%= course.subject.name %> (<%= course.subject.code %>)</h2>
+
+<div style="background: #f4f4f4; padding: 15px; margin-bottom: 20px;">
+    <strong>Időpont:</strong> <%= course.dayOfWeek %> <%= course.startTime %>-<%= course.endTime %><br>
+    <strong>Helyszín:</strong> <%= course.room.name %><br>
+    <strong>Kredit:</strong> <%= course.subject.credit %>
+</div>
+
+<h3>Tananyagok / Fájlok</h3>
+<p>Jelenleg nincsenek feltöltött fájlok.</p>
+<form action="/teacher/courses/<%= course._id %>/upload" method="POST" enctype="multipart/form-data">
+    <label>Új tananyag feltöltése:</label>
+    <input type="file" name="material">
+    <button type="button" onclick="alert('A fájlfeltöltés funkció fejlesztés alatt!')">Feltöltés</button>
+</form>
+
+<hr>
+
+<h3>Beiratkozott hallgatók névsora (<%= course.enrolledStudents.length %> fő)</h3>
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Neptun</th>
+            <th>Név</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% course.enrolledStudents.forEach(student => { %>
+            <tr>
+                <td><%= student.neptunCode %></td>
+                <td><%= student.name %></td>
+                <td><a href="mailto:<%= student.email %>"><%= student.email %></a></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<br>
+<a href="/teacher/dashboard">Vissza a vezérlőpultra</a>
+
+<%- include('../partials/footer') %>

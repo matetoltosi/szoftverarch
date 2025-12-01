@@ -1,0 +1,62 @@
+<%- include('../partials/header', { title: 'Érdemjegyek rögzítése' })  %>
+
+<h1>Érdemjegyek rögzítése</h1>
+
+<form action="/teacher/grading" method="GET">
+    <label for="courseSelect">Válassz kurzust:</label>
+    <select name="courseId" id="courseSelect" onchange="this.form.submit()">
+        <option value="">-- Válassz --</option>
+        <% myCourses.forEach(c => { %>
+            <option value="<%= c._id %>" <%= selectedCourseId == c._id ? 'selected' : '' %>>
+                <%= c.subject.name %> (<%= c.dayOfWeek %>)
+            </option>
+        <% }) %>
+    </select>
+</form>
+
+<hr>
+
+<% if (students && students.length > 0) { %>
+    <h3>Hallgatók listája: <%= selectedCourseName %></h3>
+    
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Neptun Kód</th>
+                <th>Név</th>
+                <th>Jelenlegi Jegy</th>
+                <th>Új Jegy rögzítése</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.forEach(student => { %>
+                <tr>
+                    <td><%= student.neptunCode %></td>
+                    <td><%= student.name %></td>
+                    <td>
+                        <%= student.grade ? student.grade : 'Nincs jegy' %>
+                    </td>
+                    <td>
+                        <form action="/api/v1/grades" method="POST">
+                            <input type="hidden" name="studentId" value="<%= student._id %>">
+                            <input type="hidden" name="courseId" value="<%= selectedCourseId %>">
+                            
+                            <select name="grade">
+                                <option value="1">1 (Elégtelen)</option>
+                                <option value="2">2 (Elégséges)</option>
+                                <option value="3">3 (Közepes)</option>
+                                <option value="4">4 (Jó)</option>
+                                <option value="5">5 (Jeles)</option>
+                            </select>
+                            <button type="submit">Mentés</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+<% } else if (selectedCourseId) { %>
+    <p>Erre a kurzusra még nincs feliratkozott hallgató.</p>
+<% } %>
+
+<%- include('../partials/footer') %>

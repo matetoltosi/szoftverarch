@@ -1,19 +1,16 @@
-// route/auth.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
 const User = require('../models/user');
 
-// GET /login - render login form
 router.get('/login', (req, res) => {
   if (req.user) {
-    return res.redirect('/'); // already logged in
+    return res.redirect('/'); 
   }
   res.render('auth/login', { error: null });
 });
 
-// POST /login - handle login
 router.post('/login', async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -28,7 +25,7 @@ router.post('/login', async (req, res, next) => {
       return res.status(401).render('auth/login', { error: 'Invalid credentials (password is incorrect)' });
     }
 
-    // store user id in session
+    
     req.session.userId = user._id.toString();
 
     res.redirect('/');
@@ -37,7 +34,6 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-// POST /logout - destroy session
 router.post('/logout', (req, res, next) => {
   if (!req.session) {
     return res.redirect('/login');

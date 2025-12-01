@@ -1,0 +1,69 @@
+<%- include('../partials/header') %>
+
+<h1>Adminisztrátori Vezérlőpult</h1>
+
+<section>
+    <h3>Rendszerstatisztika</h3>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Regisztrált Hallgatók</th>
+                <th>Regisztrált Oktatók</th>
+                <th>Aktív Kurzusok</th>
+                <th>Függőben lévő kérelmek</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><%= stats.studentCount %> fő</td>
+                <td><%= stats.teacherCount %> fő</td>
+                <td><%= stats.courseCount %> db</td>
+                <td><%= stats.pendingRequests %> db</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<hr>
+
+<section>
+    <h3>Gyorsműveletek</h3>
+    <ul>
+        <li><a href="/admin/users">Felhasználók kezelése</a></li>
+        <li><a href="/admin/subjects">Tantárgyak és tanterv kezelése</a></li>
+        <li><a href="/admin/finances">Pénzügyi tétel kiírása</a></li>
+        <li><a href="/admin/audit-logs">Audit napló megtekintése</a></li>
+    </ul>
+</section>
+
+<hr>
+
+<section>
+    <h3>Legutóbbi rendszertevékenységek</h3>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Időpont</th>
+                <th>Felhasználó</th>
+                <th>Tevékenység</th>
+                <th>Részletek</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (recentLogs && recentLogs.length > 0) { %>
+                <% recentLogs.forEach(log => { %>
+                    <tr>
+                        <td><%= log.createdAt.toLocaleString() %></td>
+                        <td><%= log.userEmail %></td>
+                        <td><%= log.action %></td>
+                        <td><%= log.details %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="4">Nincs friss naplóbejegyzés.</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</section>
+
+<%- include('../partials/footer') %>

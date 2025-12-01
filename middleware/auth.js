@@ -1,4 +1,3 @@
-// middleware/auth.js
 const User = require('../models/user');
 
 async function loadUser(req, res, next) {
@@ -14,7 +13,7 @@ async function loadUser(req, res, next) {
       req.user = null;
     } else {
       req.user = user;
-      res.locals.currentUser = user; // available in views
+      res.locals.currentUser = user;
     }
 
     next();
@@ -25,7 +24,6 @@ async function loadUser(req, res, next) {
 
 function requireLogin(req, res, next) {
   if (!req.user) {
-    // optionally you can redirect to /login instead of 401
     return res.redirect('/login');
   }
   next();

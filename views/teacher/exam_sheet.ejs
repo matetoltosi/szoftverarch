@@ -1,0 +1,42 @@
+<%- include('../partials/header', { title: 'Vizsga jelenléti ív / Eredménylap' })  %>
+
+<h1>Vizsga jelenléti ív / Eredménylap</h1>
+<h3>Tárgy: <%= exam.course.subject.name %></h3>
+<p>
+    <strong>Dátum:</strong> <%= exam.date.toLocaleDateString() %> <%= exam.startTime %><br>
+    <strong>Terem:</strong> <%= exam.room.name %>
+</p>
+
+<table border="1" cellpadding="5" width="100%">
+    <thead>
+        <tr>
+            <th>Sorszám</th>
+            <th>Neptun kód</th>
+            <th>Név</th>
+            <th>Aláírás</th>
+            <th>Jegy</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (exam.registrations && exam.registrations.length > 0) { %>
+            <% exam.registrations.forEach((reg, index) => { %>
+                <tr>
+                    <td><%= index + 1 %>.</td>
+                    <td><%= reg.student.neptunCode %></td>
+                    <td><%= reg.student.name %></td>
+                    <td></td> <td>
+                        <%= reg.grade ? reg.grade : '___' %>
+                    </td>
+                </tr>
+            <% }) %>
+        <% } else { %>
+            <tr><td colspan="5">Még senki nem jelentkezett erre a vizsgára.</td></tr>
+        <% } %>
+    </tbody>
+</table>
+
+<br>
+<button onclick="window.print()">Nyomtatás</button>
+<a href="/teacher/dashboard">Vissza</a>
+
+<%- include('../partials/footer') %>

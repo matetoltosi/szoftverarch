@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Admin Panel</title>
-</head>
-<body>
-  <h1>Admin Panel</h1>
+<%- include('../partials/header', { title: 'Admin Panel' }) %>
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">Admin Panel</h1>
+  </div>
+
   <p><a href="/">Back to home</a></p>
   <h2>Users</h2>
   <ul>
@@ -13,5 +12,6 @@
       <li><%= u.username %> — <%= u.role %> — <%= u.isActive ? 'active' : 'inactive' %></li>
     <% }) %>
   </ul>
-</body>
-</html>
+</div>
+
+<%- include('../partials/footer') %>
