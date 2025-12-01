@@ -1,0 +1,7 @@
+</main>
+    <footer>
+        <hr>
+        <p>&copy; <%= new Date().getFullYear() %> Egyetemi Nyilvántartó Rendszer</p>
+    </footer>
+</body>
+</html>

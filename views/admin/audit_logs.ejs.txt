@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+
+<h1>Rendszernapló (Audit Logs)</h1>
+
+<form action="/admin/audit-logs" method="GET">
+    <input type="text" name="search" placeholder="Keresés felhasználóra..." value="<%= searchQuery %>">
+    <button type="submit">Szűrés</button>
+</form>
+<br>
+
+<table border="1" cellpadding="5" width="100%">
+    <thead>
+        <tr>
+            <th>Dátum</th>
+            <th>User ID / Email</th>
+            <th>Esemény típusa</th>
+            <th>Adatok (JSON)</th>
+            <th>IP Cím</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% logs.forEach(log => { %>
+            <tr>
+                <td><%= log.createdAt.toLocaleString() %></td>
+                <td><%= log.userEmail ? log.userEmail : log.userId %></td>
+                <td><strong><%= log.action %></strong></td>
+                <td>
+                    <pre style="font-size: 0.8em; max-width: 300px; overflow-x: auto;"><%= JSON.stringify(log.details, null, 2) %></pre>
+                </td>
+                <td><%= log.ipAddress %></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<div style="margin-top: 10px;">
+    <% if (currentPage > 1) { %>
+        <a href="/admin/audit-logs?page=<%= currentPage - 1 %>">&laquo; Előző</a>
+    <% } %>
+    <span>Oldal: <%= currentPage %></span>
+    <a href="/admin/audit-logs?page=<%= currentPage + 1 %>">Következő &raquo;</a>
+</div>
+
+<%- include('../partials/footer') %>

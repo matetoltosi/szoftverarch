@@ -1,0 +1,77 @@
+<%- include('../partials/header') %>
+
+<h1>Oktatói Vezérlőpult</h1>
+<h2>Üdvözlöm, <%= user.title %> <%= user.name %>!</h2>
+
+<div style="display: flex; gap: 20px;">
+    
+    <div style="flex: 1;">
+        <h3>Kurzusaim ebben a félévben</h3>
+        <table border="1" cellpadding="5" width="100%">
+            <thead>
+                <tr>
+                    <th>Tantárgy</th>
+                    <th>Időpont</th>
+                    <th>Terem</th>
+                    <th>Jelentkezők</th>
+                    <th>Műveletek</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (myCourses && myCourses.length > 0) { %>
+                    <% myCourses.forEach(course => { %>
+                        <tr>
+                            <td><%= course.subject.name %></td>
+                            <td><%= course.dayOfWeek %> <%= course.startTime %></td>
+                            <td><%= course.room.name %></td>
+                            <td><%= course.enrolledStudents.length %> / <%= course.maxCapacity %></td>
+                            <td>
+                                <a href="/teacher/grading?courseId=<%= course._id %>">Jegybeírás</a> |
+                                <a href="/teacher/courses/<%= course._id %>">Részletek</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="5">Nincs aktív kurzusa.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="flex: 1;">
+        <h3>Következő vizsgaalkalmak</h3>
+        <table border="1" cellpadding="5" width="100%">
+            <thead>
+                <tr>
+                    <th>Tárgy</th>
+                    <th>Dátum</th>
+                    <th>Jelentkezők</th>
+                    <th>Művelet</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (upcomingExams && upcomingExams.length > 0) { %>
+                    <% upcomingExams.forEach(exam => { %>
+                        <tr>
+                            <td><%= exam.course.subject.name %></td>
+                            <td><%= exam.date.toLocaleDateString() %> <%= exam.startTime %></td>
+                            <td><%= exam.currentHeadcount %> fő</td>
+                            <td>
+                                <a href="/teacher/exams/<%= exam._id %>/sheet">Vizsgalap</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="4">Nincs közelgő vizsgaalkalom.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+        <br>
+        <form action="/teacher/exams/create" method="GET">
+            <button type="submit">Új vizsgaalkalom meghirdetése</button>
+        </form>
+    </div>
+
+</div>
+
+<%- include('../partials/footer') %>

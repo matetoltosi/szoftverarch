@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+
+<h1>Tantárgy szerkesztése</h1>
+
+<form action="/admin/subjects/edit/<%= subject._id %>" method="POST">
+    <label>Kód: 
+        <input type="text" name="code" value="<%= subject.code %>" required>
+    </label><br><br>
+    
+    <label>Név: 
+        <input type="text" name="name" value="<%= subject.name %>" required>
+    </label><br><br>
+    
+    <label>Kredit: 
+        <input type="number" name="credit" value="<%= subject.credit %>" required>
+    </label><br><br>
+    
+    <label>Ajánlott félév: 
+        <input type="number" name="recommendedSemester" value="<%= subject.recommendedSemester %>">
+    </label><br><br>
+
+    <button type="submit">Módosítások mentése</button>
+    <a href="/admin/subjects">Mégse</a>
+</form>
+
+<%- include('../partials/footer') %>

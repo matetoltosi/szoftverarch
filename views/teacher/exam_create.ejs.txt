@@ -1,0 +1,60 @@
+<%- include('../partials/header') %>
+
+<h1>Új vizsgaalkalom meghirdetése</h1>
+
+<form action="/api/v1/exams" method="POST">
+    <div>
+        <label for="courseId">Kurzus kiválasztása:</label>
+        <select name="courseId" id="courseId" required>
+            <option value="">-- Válassz kurzust --</option>
+            <% myCourses.forEach(c => { %>
+                <option value="<%= c._id %>"><%= c.subject.name %> (<%= c.dayOfWeek %>)</option>
+            <% }) %>
+        </select>
+    </div>
+    <br>
+
+    <div>
+        <label for="type">Vizsga típusa:</label>
+        <select name="type" id="type">
+            <option value="WRITTEN">Írásbeli</option>
+            <option value="ORAL">Szóbeli</option>
+        </select>
+    </div>
+    <br>
+
+    <div>
+        <label>Dátum:</label>
+        <input type="date" name="date" required>
+    </div>
+    <div>
+        <label>Kezdés:</label>
+        <input type="time" name="startTime" required>
+    </div>
+    <div>
+        <label>Befejezés:</label>
+        <input type="time" name="endTime" required>
+    </div>
+    <br>
+
+    <div>
+        <label for="roomId">Terem:</label>
+        <select name="roomId" id="roomId" required>
+            <% rooms.forEach(r => { %>
+                <option value="<%= r._id %>"><%= r.name %> (Kapacitás: <%= r.capacity %> fő)</option>
+            <% }) %>
+        </select>
+    </div>
+    <br>
+
+    <div>
+        <label>Maximális létszám:</label>
+        <input type="number" name="maxHeadcount" min="1" required>
+    </div>
+    <br>
+
+    <button type="submit">Vizsga meghirdetése</button>
+    <a href="/teacher/dashboard">Mégse</a>
+</form>
+
+<%- include('../partials/footer') %>

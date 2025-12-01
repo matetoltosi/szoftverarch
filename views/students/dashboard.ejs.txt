@@ -1,0 +1,37 @@
+<%- include('../partials/header') %>
+
+<h1>Hallgatói Vezérlőpult</h1>
+<h2>Szia, <%= user.name %>! (Neptun: <%= user.neptunCode %>)</h2>
+
+<h3>Aktuális szemeszter felvett kurzusai</h3>
+
+<% if (courses && courses.length > 0) { %>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Tantárgy kód</th>
+                <th>Tantárgy név</th>
+                <th>Oktató</th>
+                <th>Időpont</th>
+                <th>Helyszín</th>
+                <th>Kredit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% courses.forEach(course => { %>
+                <tr>
+                    <td><%= course.subject.code %></td>
+                    <td><%= course.subject.name %></td>
+                    <td><%= course.teacher.name %></td>
+                    <td><%= course.dayOfWeek %> <%= course.startTime %>-<%= course.endTime %></td>
+                    <td><%= course.room.name %></td>
+                    <td><%= course.subject.credit %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>Nincs felvett kurzusod ebben a félévben.</p>
+<% } %>
+
+<%- include('../partials/footer') %>

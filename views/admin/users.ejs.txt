@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<h1>Felhasználók Kezelése</h1>
+
+<h3>Új felhasználó hozzáadása</h3>
+<form action="/admin/users/create" method="POST">
+    <label>Név: <input type="text" name="name" required></label>
+    <label>Email: <input type="email" name="email" required></label>
+    <label>Szerepkör: 
+        <select name="role">
+            <option value="STUDENT">Hallgató</option>
+            <option value="TEACHER">Oktató</option>
+            <option value="ADMIN">Admin</option>
+        </select>
+    </label>
+    <label>Neptun (csak hallgató): <input type="text" name="neptunCode"></label>
+    <button type="submit">Létrehozás</button>
+</form>
+
+<hr>
+
+<h3>Regisztrált Felhasználók</h3>
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Név</th>
+            <th>Email</th>
+            <th>Szerepkör</th>
+            <th>Műveletek</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% users.forEach(u => { %>
+            <tr>
+                <td><%= u.name %></td>
+                <td><%= u.email %></td>
+                <td><%= u.role %></td>
+                <td>
+                    <a href="/admin/users/edit/<%= u._id %>">Szerkesztés</a> | 
+                    <form action="/admin/users/delete/<%= u._id %>" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Biztosan törlöd?')">Törlés</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<%- include('../partials/footer') %>

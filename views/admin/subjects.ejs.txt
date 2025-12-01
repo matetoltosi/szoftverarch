@@ -1,0 +1,65 @@
+<%- include('../partials/header') %>
+
+<h1>Tantárgyak Kezelése</h1>
+
+<section>
+    <h3>Új tantárgy felvétele</h3>
+    <form action="/admin/subjects/create" method="POST">
+        <label>Tárgykód (pl. INF-101): 
+            <input type="text" name="code" required>
+        </label><br><br>
+        
+        <label>Tantárgy neve: 
+            <input type="text" name="name" required>
+        </label><br><br>
+        
+        <label>Kredit: 
+            <input type="number" name="credit" min="0" max="30" required>
+        </label><br><br>
+        
+        <label>Ajánlott félév: 
+            <input type="number" name="recommendedSemester" min="1" max="12">
+        </label><br><br>
+        
+        <button type="submit">Hozzáadás</button>
+    </form>
+</section>
+
+<hr>
+
+<section>
+    <h3>Tantárgylista</h3>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Kód</th>
+                <th>Név</th>
+                <th>Kredit</th>
+                <th>Ajánlott félév</th>
+                <th>Műveletek</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (subjects && subjects.length > 0) { %>
+                <% subjects.forEach(subject => { %>
+                    <tr>
+                        <td><strong><%= subject.code %></strong></td>
+                        <td><%= subject.name %></td>
+                        <td><%= subject.credit %></td>
+                        <td><%= subject.recommendedSemester %></td>
+                        <td>
+                            <a href="/admin/subjects/edit/<%= subject._id %>">Szerkesztés</a> | 
+                            <form action="/admin/subjects/delete/<%= subject._id %>" method="POST" style="display:inline;">
+                                <button type="submit" onclick="return confirm('Törlés esetén a hozzá kapcsolódó kurzusok is archiválásra kerülhetnek. Folytatja?')">Törlés</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="5">Nincs rögzített tantárgy.</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</section>
+
+<%- include('../partials/footer') %>
