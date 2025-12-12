@@ -2,44 +2,23 @@ const User = require('../models/user');
 
 async function loadUser(req, res, next) {
   try {
-    if (!req.session || !req.session.userId) {
+    const userId = req.session && req.session.userId;
+    if (!userId) {
       req.user = null;
       return next();
     }
 
-    const user = await User.findById(req.session.userId);
-
+    const user = await User.findById(userId);
     if (!user || !user.isActive) {
       req.user = null;
-    } else {
-      req.user = user;
-      res.locals.currentUser = user;
+      return next();
     }
 
-    next();
+    req.user = user;
+    return next();
   } catch (err) {
-    next(err);
+    return next(err);
   }
 }
 
-function requireLogin(req, res, next) {
-  if (!req.user) {
-    return res.redirect('/login');
-  }
-  next();
-}
-
-function requireRole(...roles) {
-  return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).send('Forbidden');
-    }
-    next();
-  };
-}
-
-module.exports = {
-  loadUser,
-  requireLogin,
-  requireRole
-};
+module.exports = { loadUser };
