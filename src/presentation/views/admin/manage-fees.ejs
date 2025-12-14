@@ -3,10 +3,8 @@
 <form id = "feeForm">
   <label for="studentEmail">Student Email</label>
   <input type="email" name="studentEmail" id="studentEmail" required>
-
   <label for="amount">Amount</label>
   <input type="number" name="amount" id="amount" min="0" step="0.01" required>
-
   <button type="submit">Write Fee</button>
 </form>
 
@@ -36,9 +34,12 @@
     fees.forEach(fee => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td>${fee.studentId.email}</td>
+        <td>${fee._id}</td>
+        <td>${fee.studentEmail}</td>
         <td>${fee.amount}</td>
         <td>${fee.status}</td>
+        <td>
+        </td>
       `;
       tbody.appendChild(row);
     });
@@ -52,7 +53,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentId: studentId.value,
+          studentEmail: studentEmail.value,
           amount: amount.value
         })
       });

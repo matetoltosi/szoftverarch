@@ -1,10 +1,21 @@
 const feeReposotiroy = require('../../data_access/repositories/fee_repository');
+const userRepository = require('../../data_access/repositories/user_repository');
 
 async function listAll() {
-  return feeReposotiroy.findAll();
+  const fees = await feeReposotiroy.findAll();
+
+  return Promise.all(fees.map(async (fee) => {
+    const student = await userRepository.findById(fee.studentId);
+    return {
+      _id: fee._id,
+      studentEmail: student.email,
+      amount: fee.amount,
+      status: fee.status
+    };
+  }));
 }
 
-async function create(actor, { studentId, amount }) {
+async function create(actor, { studentEmail, amount }) {
   if (actor.role !== 'admin') {
     throw new Error('Forbidden');
   }
@@ -13,8 +24,18 @@ async function create(actor, { studentId, amount }) {
     throw new Error('Invalid amount');
   }
 
+  const student = await userRepository.findByEmail(studentEmail);
+
+  if (!student) {
+    throw new Error('Student not found');
+  }
+
+  if (student.role !== 'student') {
+    throw new Error('User is not a student');
+  }
+
   return feeReposotiroy.create({
-    studentId,
+    studentId: student._id,
     amount,
     status: 'unpaid'
   });

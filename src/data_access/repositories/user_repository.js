@@ -1,5 +1,9 @@
 const User = require('../schemas/user_schema');
 
+async function findById(id) {
+  return User.findById(id).lean();
+}
+
 async function findByEmail(email) {
   return User.findOne({ email }).lean();
 }
@@ -13,6 +17,7 @@ async function findAll() {
 }
 
 module.exports = {
+  findById,
   findByEmail,
   create,
   findAll
