@@ -1,10 +1,78 @@
-<h2>Apply for an Exam</h2>
+<h2>Apply for Exams</h2>
 
-<form method="POST" action="/api/student/exams/apply">
-  <label for="examId">Select Exam</label>
-  <select name="examId" id="examId" required>
-    <option value="">-- Select an exam --</option>
-  </select>
+<table>
+  <thead>
+    <tr>
+      <th>Exam</th>
+      <th>Subject</th>
+      <th>Date</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="examTableBody"></tbody>
+</table>
 
-  <button type="submit">Apply</button>
-</form>
+<script>
+  async function fetchExams() {
+    const res = await fetch('/api/student/exams');
+    if (!res.ok) {
+      alert('Failed to load exams');
+      return;
+    }
+
+    const exams = await res.json();
+    const tbody = document.getElementById('examTableBody');
+    tbody.innerHTML = '';
+
+    exams
+      .filter(exam => exam.subject && exam.active !== false)
+      .forEach(exam => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>${exam.name}</td>
+          <td>${exam.subject}</td>
+          <td>${exam.date ? new Date(exam.date).toLocaleDateString() : '-'}</td>
+          <td>${exam.applied ? 'Applied' : 'Not applied'}</td>
+          <td>
+            ${
+              exam.applied
+                ? `<button onclick="withdraw('${exam._id}')">Withdraw</button>`
+                : `<button onclick="apply('${exam._id}')">Apply</button>`
+            }
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+  }
+
+  async function apply(examId) {
+    const res = await fetch(`/api/student/exams/${examId}`, {
+      method: 'POST'
+    });
+
+    if (!res.ok) {
+      alert('Failed to apply');
+      return;
+    }
+
+    fetchExams();
+  }
+
+  async function withdraw(examId) {
+    const res = await fetch(`/api/student/exams/${examId}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) {
+      alert('Failed to withdraw');
+      return;
+    }
+
+    fetchExams();
+  }
+
+  fetchExams();
+</script>

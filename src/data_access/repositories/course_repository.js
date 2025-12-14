@@ -18,6 +18,22 @@ function findAllPopulated() {
     .lean();
 }
 
+function addStudent(courseId, studentId) {
+  return Course.findByIdAndUpdate(
+    courseId,
+    { $addToSet: { appliedStudents: studentId } },
+    { new: true }
+  ).lean();
+}
+
+function removeStudent(courseId, studentId) {
+  return Course.findByIdAndUpdate(
+    courseId,
+    { $pull: { appliedStudents: studentId } },
+    { new: true }
+  ).lean();
+}
+
 function remove(id) {
   return Course.findByIdAndDelete(id);
 }
@@ -27,5 +43,7 @@ module.exports = {
   findBySubject,
   findById,
   findAllPopulated,
+  addStudent,
+  removeStudent,
   remove
 };

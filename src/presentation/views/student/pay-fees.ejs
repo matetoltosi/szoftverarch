@@ -1,7 +1,66 @@
 <h2>Pay Fees</h2>
 
-<form method="POST" action="/api/student/fees/pay">
-  <label for="amount">Amount</label>
-  <input type="number" name="amount" id="amount" min="0" step="0.01" required/>
-  <button type="submit">Pay</button>
-</form>
+<table id="unpaidFees">
+  <thead>
+    <tr>
+      <th>Amount</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<h3>Paid Fees</h3>
+<table id="paidFees" class="paid-table">
+  <thead>
+    <tr>
+      <th>Amount</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+async function loadFees() {
+  const res = await fetch('/api/student/fees');
+  const fees = await res.json();
+
+  const activeFees = document.querySelector('#unpaidFees tbody');
+  const paidFees = document.querySelector('#paidFees tbody');
+  activeFees.innerHTML = '';
+  paidFees.innerHTML = '';
+
+  fees.forEach(fee => {
+    if (fee.status === 'unpaid') {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${fee.amount}</td>
+        <td><button onclick="pay('${fee._id}')">Pay</button></td>
+      `;
+      activeFees.appendChild(row);
+    }
+    else {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${fee.amount}</td>
+        <td>Paid</td>
+      `;
+      paidFees.appendChild(row);
+    }
+  });
+}
+
+async function pay(feeId) {
+  const res = await fetch(`/api/student/fees/${feeId}`, { method: 'PUT' });
+
+  if (!res.ok) {
+    alert('Payment failed');
+    return;
+  }
+
+  loadFees();
+}
+
+loadFees();
+</script>

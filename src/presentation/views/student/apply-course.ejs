@@ -1,10 +1,76 @@
-<h2>Apply for a Course</h2>
+<h2>Apply for Courses</h2>
 
-<form method="POST" action="/api/student/courses/apply">
-  <label for="courseId">Select Course</label>
-  <select name="courseId" id="courseId" required>
-    <option value="">-- Select a course --</option>
-  </select>
+<table>
+  <thead>
+    <tr>
+      <th>Course</th>
+      <th>Subject</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="courseTableBody"></tbody>
+</table>
 
-  <button type="submit">Apply</button>
-</form>
+<script>
+  async function fetchCourses() {
+    const res = await fetch('/api/student/courses');
+    if (!res.ok) {
+      alert('Failed to load courses');
+      return;
+    }
+    
+    const courses = await res.json();
+    const tbody = document.getElementById('courseTableBody');
+    tbody.innerHTML = '';
+
+    courses
+      .filter(course => course.subject && course.active !== false)
+      .forEach(course => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>${course.name}</td>
+          <td>${course.subject}</td>
+          <td>${course.applied ? 'Applied' : 'Not applied'}</td>
+          <td>
+            ${
+              course.applied
+                ? `<button onclick="withdraw('${course._id}')">Withdraw</button>`
+                : `<button onclick="apply('${course._id}')">Apply</button>`
+            }
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+  }
+
+  async function apply(courseId) {
+    const res = await fetch(`/api/student/courses/${courseId}`, {
+      method: 'POST'
+    });
+
+    if (!res.ok) {
+      alert('Failed to apply');
+      return;
+    }
+
+    fetchCourses();
+  }
+
+  async function withdraw(courseId) {
+    const res = await fetch(`/api/student/courses/${courseId}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) {
+      alert('Failed to withdraw');
+      return;
+    }
+
+    fetchCourses();
+  }
+
+  fetchCourses();
+</script>

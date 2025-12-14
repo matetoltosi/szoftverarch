@@ -1,11 +1,19 @@
 <h2>Upload Document</h2>
 
-<form
-  method="POST"
-  action="/api/student/documents/upload"
-  enctype="multipart/form-data"
->
-  <label for="document">Select Document</label>
-  <input type="file" name="document" id="document" required/>
-  <button type="submit">Upload</button>
+<form id="docForm" enctype="multipart/form-data">
+  <input type="file" name="document" required>
+  <button>Upload</button>
 </form>
+
+<script>
+document.getElementById('docForm')
+  .addEventListener('submit', async e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    await fetch('/api/student/documents', {
+      method: 'POST',
+      body: formData
+    });
+  });
+</script>

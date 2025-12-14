@@ -12,6 +12,9 @@ const adminFeeController = require('./presentation/api/admin_fee_controller');
 const teacherSubjectController = require('./presentation/api/teacher_subject_controller');
 const teacherCourseController = require('./presentation/api/teacher_course_controller');
 const teacherExamController = require('./presentation/api/teacher_exam_controller');
+const studentCourseController = require('./presentation/api/student_course_controller');
+const studentExamController = require('./presentation/api/student_exam_controller');
+const studentFeeController = require('./presentation/api/student_fee_controller');
 
 const publicRoutes = require('./presentation/routes/public_routes');
 const studentRoutes = require('./presentation/routes/student_routes');
@@ -39,11 +42,14 @@ app.set('views', path.join(__dirname, 'presentation/views'));
 app.use(express.static(path.join(__dirname, 'presentation/static')));
 
 app.use('/api/auth', authController);
-app.use('/api/admin', adminSubjectController);
-app.use('/api/admin', adminFeeController);
+app.use('/api/student', studentCourseController);
+app.use('/api/student', studentExamController);
+app.use('/api/student', studentFeeController);
 app.use('/api/teacher', teacherSubjectController);
 app.use('/api/teacher', teacherCourseController);
 app.use('/api/teacher', teacherExamController);
+app.use('/api/admin', adminSubjectController);
+app.use('/api/admin', adminFeeController);
 
 app.use('/', publicRoutes);
 app.use('/student', studentRoutes);

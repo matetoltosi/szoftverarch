@@ -8,6 +8,10 @@ function findAll() {
   return Fee.find().lean();
 }
 
+function findById(feeId) {
+  return Fee.findById(feeId).lean();
+}
+
 function findByStudent(studentId) {
   return Fee.find({ studentId }).lean();
 }
@@ -23,6 +27,7 @@ function markPaid(id) {
 module.exports = {
   create,
   findAll,
+  findById,
   findByStudent,
   markPaid
 };

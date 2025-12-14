@@ -41,7 +41,44 @@ async function create(actor, { studentEmail, amount }) {
   });
 }
 
+async function listForStudent(actor) {
+  if (actor.role !== 'student') {
+    throw new Error('Fordbidden');
+  }
+
+  const user = await userRepository.findByEmail(actor.email);
+  return await feeReposotiroy.findByStudent(user._id);
+}
+
+async function pay(actor, feeId) {
+  if (actor.role !== 'student') {
+    throw new Error('Fordbidden');
+  }
+
+  const fee = await feeReposotiroy.findById(feeId);
+  if (!fee) {
+    throw new Error('Fee not found');
+  }
+
+  const user = await userRepository.findByEmail(actor.email);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  if (fee.studentId.toString() !== user._id.toString()) {
+    throw new Error('Payment forbidden for another user');
+  }
+
+  if (fee.status === 'paid') {
+    throw new Error('Fee already paid');
+  }
+
+  await feeReposotiroy.markPaid(feeId);
+}
+
 module.exports = {
   listAll,
-  create
+  create,
+  listForStudent,
+  pay
 };
