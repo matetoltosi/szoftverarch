@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header>
+  <h1>Kókány Neptun</h1>
+  <% if (user) { %>
+    <nav>
+      <form method="POST" action="/api/auth/logout">
+        <button>Logout</button>
+      </form>
+      <a href="/<%= user.role %>/dashboard">Back to Dashboard</a>
+    </nav>
+  <% } %>
+</header>
+
+<main>
+  <%- include(body) %>
+</main>
+
+<footer>
+  <small>&copy; 2025 Kókány Neptun - ASD Informatika</small>
+</footer>
+
+</body>
+</html>

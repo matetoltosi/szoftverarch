@@ -1,0 +1,11 @@
+<h2>Upload Document</h2>
+
+<form
+  method="POST"
+  action="/api/student/documents/upload"
+  enctype="multipart/form-data"
+>
+  <label for="document">Select Document</label>
+  <input type="file" name="document" id="document" required/>
+  <button type="submit">Upload</button>
+</form>

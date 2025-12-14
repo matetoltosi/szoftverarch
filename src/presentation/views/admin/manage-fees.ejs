@@ -1,0 +1,64 @@
+<h2>Manage Fees</h2>
+
+<form id = "feeForm">
+  <label for="studentEmail">Student Email</label>
+  <input type="email" name="studentEmail" id="studentEmail" required>
+
+  <label for="amount">Amount</label>
+  <input type="number" name="amount" id="amount" min="0" step="0.01" required>
+
+  <button type="submit">Write Fee</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fee ID</th>
+      <th>Student</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
+
+<script>
+  async function fetchFees() {
+    const res = await fetch('/api/admin/fees');
+    const fees = await res.json();
+
+    const tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
+
+    fees.forEach(fee => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${fee.studentId.email}</td>
+        <td>${fee.amount}</td>
+        <td>${fee.status}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  document.getElementById('feeForm')
+    .addEventListener('submit', async e => {
+      e.preventDefault();
+
+      await fetch('/api/admin/fees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId: studentId.value,
+          amount: amount.value
+        })
+      });
+
+      fetchFees();
+    });
+
+  fetchFees();
+</script>

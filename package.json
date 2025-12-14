@@ -1,11 +1,11 @@
 {
-  "name": "Kókány Neptun",
+  "name": "kokany-neptun",
   "version": "1.0.0",
   "description": "University student information system with users, roles, courses, teachers and subjects.",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "author": "",
   "license": "MIT",

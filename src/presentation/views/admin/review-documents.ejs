@@ -1,0 +1,55 @@
+<h2>Review Documents</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Document ID</th>
+      <th>Student</th>
+      <th>Title</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
+
+<script>
+  async function fetchDocuments() {
+    const res = await fetch('/api/admin/documents');
+    const docs = await res.json();
+
+    const tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
+
+    docs.forEach(doc => {
+      const row = document.createElement('tr');
+
+      const actions =
+        doc.status === 'submitted'
+          ? `
+            <button onclick="review('${doc._id}','approved')">Approve</button>
+            <button onclick="review('${doc._id}','rejected')">Reject</button>
+          `
+          : '';
+
+      row.innerHTML = `
+        <td>${doc.studentId.email}</td>
+        <td>${doc.filename}</td>
+        <td>${doc.status}</td>
+        <td>${actions}</td>
+      `;
+
+      tbody.appendChild(row);
+    });
+  }
+
+  async function review(id, status) {
+    await fetch(`/api/admin/documents/${id}/${status}`, {
+      method: 'PUT'
+    });
+    fetchDocuments();
+  }
+
+  fetchDocuments();
+</script>

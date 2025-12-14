@@ -1,0 +1,27 @@
+<h2>Manage Exams</h2>
+
+<form method="POST" action="/api/teacher/exams/create">
+  <label for="examName">Exam Name</label>
+  <input type="text" name="examName" id="examName" required>
+
+  <label for="courseId">Associated Course</label>
+  <select name="courseId" id="courseId" required>
+    <option value="">-- Select a course --</option>
+  </select>
+
+  <button type="submit">Create Exam</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Exam ID</th>
+      <th>Name</th>
+      <th>Course</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>

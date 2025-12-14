@@ -1,0 +1,26 @@
+const feeReposotiroy = require('../../data_access/repositories/fee_repository');
+
+async function listAll() {
+  return feeReposotiroy.findAll();
+}
+
+async function create(actor, { studentId, amount }) {
+  if (actor.role !== 'admin') {
+    throw new Error('Forbidden');
+  }
+
+  if (amount <= 0) {
+    throw new Error('Invalid amount');
+  }
+
+  return feeReposotiroy.create({
+    studentId,
+    amount,
+    status: 'unpaid'
+  });
+}
+
+module.exports = {
+  listAll,
+  create
+};
