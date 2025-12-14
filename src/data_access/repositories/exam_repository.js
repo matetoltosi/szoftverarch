@@ -4,6 +4,12 @@ function create(data) {
   return Exam.create(data);
 }
 
+function findAllPopulated() {
+  return Exam.find()
+    .populate('subjectId', 'name')
+    .lean();
+}
+
 function findBySubject(subjectId) {
   return Exam.find({ subjectId }).lean();
 }
@@ -18,6 +24,7 @@ function remove(id) {
 
 module.exports = {
   create,
+  findAllPopulated,
   findBySubject,
   findByCourse,
   remove

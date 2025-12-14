@@ -1,27 +1,58 @@
 <h2>Manage Exams</h2>
 
-<form method="POST" action="/api/teacher/exams/create">
-  <label for="examName">Exam Name</label>
-  <input type="text" name="examName" id="examName" required>
-
-  <label for="courseId">Associated Course</label>
-  <select name="courseId" id="courseId" required>
-    <option value="">-- Select a course --</option>
-  </select>
-
-  <button type="submit">Create Exam</button>
+<form id="examForm">
+  <input id="examName" placeholder="Exam name" required>
+  <input id="examDate" type="date">
+  <select id="examSubject"></select>
+  <button>Create Exam</button>
 </form>
 
-<table>
-  <thead>
-    <tr>
-      <th>Exam ID</th>
-      <th>Name</th>
-      <th>Course</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
+<ul id="examList"></ul>
 
-  </tbody>
-</table>
+<script>
+async function loadSubjects() {
+  const res = await fetch('/api/teacher/subjects');
+  const subjects = await res.json();
+  const select = document.getElementById('examSubject');
+  select.innerHTML = '';
+  subjects.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s._id;
+    opt.textContent = s.name;
+    select.appendChild(opt);
+  });
+}
+
+async function loadExams() {
+  const res = await fetch('/api/teacher/exams');
+  const exams = await res.json();
+  const ul = document.getElementById('examList');
+  ul.innerHTML = '';
+  exams.forEach(e => {
+    const li = document.createElement('li');
+    li.textContent = `${e.name} (${e.subjectId.name})`;
+    ul.appendChild(li);
+  });
+}
+
+document.getElementById('examForm')
+  .addEventListener('submit', async e => {
+    e.preventDefault();
+
+    await fetch('/api/teacher/exams', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: examName.value,
+        subjectId: examSubject.value,
+        date: examDate.value
+      })
+    });
+
+    examName.value = '';
+    loadExams();
+  });
+
+loadSubjects();
+loadExams();
+</script>

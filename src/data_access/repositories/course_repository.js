@@ -12,6 +12,12 @@ function findById(id) {
   return Course.findById(id).lean();
 }
 
+function findAllPopulated() {
+  return Course.find()
+    .populate('subjectId', 'name')
+    .lean();
+}
+
 function remove(id) {
   return Course.findByIdAndDelete(id);
 }
@@ -20,5 +26,6 @@ module.exports = {
   create,
   findBySubject,
   findById,
+  findAllPopulated,
   remove
 };

@@ -5,8 +5,13 @@ const path = require('path');
 const connectMongo = require('./data_access/mongo');
 
 const authController = require('./presentation/api/auth_controller');
+
 const adminSubjectController = require('./presentation/api/admin_subject_controller');
 const adminFeeController = require('./presentation/api/admin_fee_controller');
+
+const teacherSubjectController = require('./presentation/api/teacher_subject_controller');
+const teacherCourseController = require('./presentation/api/teacher_course_controller');
+const teacherExamController = require('./presentation/api/teacher_exam_controller');
 
 const publicRoutes = require('./presentation/routes/public_routes');
 const studentRoutes = require('./presentation/routes/student_routes');
@@ -36,6 +41,9 @@ app.use(express.static(path.join(__dirname, 'presentation/static')));
 app.use('/api/auth', authController);
 app.use('/api/admin', adminSubjectController);
 app.use('/api/admin', adminFeeController);
+app.use('/api/teacher', teacherSubjectController);
+app.use('/api/teacher', teacherCourseController);
+app.use('/api/teacher', teacherExamController);
 
 app.use('/', publicRoutes);
 app.use('/student', studentRoutes);
