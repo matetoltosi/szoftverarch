@@ -4,8 +4,10 @@ function create(data) {
   return Fee.create(data);
 }
 
-function findAll() {
-  return Fee.find().lean();
+function findAllPopulated() {
+  return Fee.find()
+    .populate('studentId', 'email')
+    .lean();
 }
 
 function findById(feeId) {
@@ -26,7 +28,7 @@ function markPaid(id) {
 
 module.exports = {
   create,
-  findAll,
+  findAllPopulated,
   findById,
   findByStudent,
   markPaid

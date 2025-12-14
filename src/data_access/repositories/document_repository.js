@@ -4,12 +4,21 @@ function create(data) {
   return Document.create(data);
 }
 
-function findAll() {
-  return Document.find().lean();
+function findAllPopulated() {
+  return Document.find()
+    .sort({ uploadedAt: -1})
+    .populate('studentId', 'email')
+    .lean();
+}
+
+function findById(id) {
+  return Document.findById(id);
 }
 
 function findByStudent(studentId) {
-  return Document.find({ studentId }).lean();
+  return Document.find({ studentId })
+    .sort({ uploadedAt: -1 })
+    .lean();
 }
 
 function updateStatus(id, status) {
@@ -22,7 +31,8 @@ function updateStatus(id, status) {
 
 module.exports = {
   create,
-  findAll,
+  findAllPopulated,
+  findById,
   findByStudent,
   updateStatus
 };

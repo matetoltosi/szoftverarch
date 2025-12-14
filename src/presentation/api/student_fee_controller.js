@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const requireAuth = require('../middlewares/require_auth');
-const feeService = require('../../business_logic/services/fee_service');
+const feeService = require('../../services/fee_service');
 
 router.get('/fees', requireAuth('student'), async (req, res) => {
   try {

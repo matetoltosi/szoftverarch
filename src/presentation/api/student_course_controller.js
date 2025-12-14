@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const requireAuth = require('../middlewares/require_auth');
-const courseService = require('../../business_logic/services/course_service');
+const courseService = require('../../services/course_service');
 
 router.get('/courses', requireAuth('student'), async (req, res) => {
   const courses = await courseService.listForStudent(req.session.user);

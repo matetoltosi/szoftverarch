@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const authService = require('../../business_logic/services/auth_service');
+const authService = require('../../services/auth_service');
 
 router.post('/login', async (req, res) => {
   try {

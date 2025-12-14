@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const requireAuth = require('../middlewares/require_auth');
-const subjectService = require('../../business_logic/services/subject_service');
+const subjectService = require('../../services/subject_service');
 
 router.post('/subjects', requireAuth('admin'), async (req, res) => {
   try {
-    const subject = await subjectService.createSubject({
+    const subject = await subjectService.createSubject(req.session.user, {
       name: req.body.name
     });
 
@@ -31,7 +31,9 @@ router.get('/subjects', requireAuth('admin'), async (req, res) => {
 
 router.put('/subjects/:id', requireAuth('admin'), async (req, res) => {
   try {
-    const subject = await subjectService.updateSubject(req.params.id, req.body.name);
+    const subject = await subjectService.updateSubject(req.session.user, {
+      id: req.params.id, name: req.body.name
+    });
     return res.json(subject);
   } catch (error) {
     if (error.code === 11000) {
@@ -44,7 +46,7 @@ router.put('/subjects/:id', requireAuth('admin'), async (req, res) => {
 
 router.delete('/subjects/:id', requireAuth('admin'), async (req, res) => {
   try {
-    await subjectService.deleteSubject(req.params.id);
+    await subjectService.deleteSubject(req.session.user, {id: req.params.id});
     return res.json({ message: 'Subject deleted' });
   } catch (error) {
     return res.status(500).json({ error: `Internal server error (${error})` });

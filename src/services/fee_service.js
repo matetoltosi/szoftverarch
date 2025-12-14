@@ -1,18 +1,10 @@
-const feeReposotiroy = require('../../data_access/repositories/fee_repository');
-const userRepository = require('../../data_access/repositories/user_repository');
+const feeReposotiroy = require('../data_access/repositories/fee_repository');
+const userRepository = require('../data_access/repositories/user_repository');
+const auditService = require('./audit_service');
+const { idFromActor } = require('./utils');
 
 async function listAll() {
-  const fees = await feeReposotiroy.findAll();
-
-  return Promise.all(fees.map(async (fee) => {
-    const student = await userRepository.findById(fee.studentId);
-    return {
-      _id: fee._id,
-      studentEmail: student.email,
-      amount: fee.amount,
-      status: fee.status
-    };
-  }));
+  return await feeReposotiroy.findAllPopulated();
 }
 
 async function create(actor, { studentEmail, amount }) {
@@ -34,11 +26,13 @@ async function create(actor, { studentEmail, amount }) {
     throw new Error('User is not a student');
   }
 
-  return feeReposotiroy.create({
-    studentId: student._id,
-    amount,
-    status: 'unpaid'
-  });
+  const result = await feeReposotiroy.create({studentId: student._id, amount, status: 'unpaid'});
+
+  await auditService.record({actor, action: 'fee_created', entityType: 'Fee', entityId: result._id, metadata: {
+    studentId: student._id
+  }})
+  
+  return result;
 }
 
 async function listForStudent(actor) {
@@ -46,8 +40,8 @@ async function listForStudent(actor) {
     throw new Error('Fordbidden');
   }
 
-  const user = await userRepository.findByEmail(actor.email);
-  return await feeReposotiroy.findByStudent(user._id);
+  const userId = await idFromActor(actor);
+  return await feeReposotiroy.findByStudent(userId);
 }
 
 async function pay(actor, feeId) {
@@ -73,7 +67,13 @@ async function pay(actor, feeId) {
     throw new Error('Fee already paid');
   }
 
-  await feeReposotiroy.markPaid(feeId);
+  const result = await feeReposotiroy.markPaid(feeId);
+
+  await auditService.record({actor, action: 'fee_paid', entityType: 'Fee', entityId: feeId, metadata: {
+    studentId: fee.studentId
+  }})
+
+  return result;
 }
 
 module.exports = {

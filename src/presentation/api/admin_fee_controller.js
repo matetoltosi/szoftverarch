@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const feeService = require('../../business_logic/services/fee_service');
+const feeService = require('../../services/fee_service');
 const requireAuth = require('../middlewares/require_auth');
 
 router.get('/fees', requireAuth('admin'), async (req, res) => {

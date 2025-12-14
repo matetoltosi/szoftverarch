@@ -1,6 +1,7 @@
-const courseRepository = require('../../data_access/repositories/course_repository');
-const subjectRepository = require('../../data_access/repositories/subject_repository');
-const userRepository = require('../../data_access/repositories/user_repository');
+const courseRepository = require('../data_access/repositories/course_repository');
+const subjectRepository = require('../data_access/repositories/subject_repository');
+const auditService = require('./audit_service');
+const { idFromActor } = require('./utils');
 
 async function create(actor, { name, subjectId }) {
   if (actor.role !== 'teacher') {
@@ -16,10 +17,16 @@ async function create(actor, { name, subjectId }) {
     throw new Error('Invalid subject');
   }
 
-  return courseRepository.create({
+  const course = await courseRepository.create({
     name: name.trim(),
     subjectId
   });
+
+  auditService.record({
+    actor, action: 'course_created', entityType: 'Course', entityId: course._id
+  });
+
+  return course;
 }
 
 async function listAll() {
@@ -32,13 +39,13 @@ async function listForStudent(actor) {
   }
 
   const courses = await courseRepository.findAllPopulated();
-  const user = await userRepository.findByEmail(actor.email);
-  
+  const userId = await idFromActor(actor);
+
   return courses.map(course => ({
     _id: course._id,
     name: course.name,
     subject: course.subjectId.name,
-    applied: course.appliedStudents?.some(id => id.toString() === user._id.toString())
+    applied: course.appliedStudents?.some(id => id.toString() === userId.toString())
   }));
 }
 
@@ -46,16 +53,32 @@ async function apply(actor, courseId) {
   if (actor.role !== 'student') {
     throw new Error('Only students can apply to courses');
   }
-  const user = await userRepository.findByEmail(actor.email);
-  return await courseRepository.addStudent(courseId, user._id);
+  const userId = await idFromActor(actor);
+  const result = await courseRepository.addStudent(courseId, userId);
+
+  auditService.record({
+    actor, action: 'course_applied', entityType: 'Course', entityId: courseId, metadata: {
+      studentId: userId
+    }
+  });
+
+  return result;
 }
 
 async function withdraw(actor, courseId) {
   if (actor.role !== 'student') {
     throw new Error('Only students can withdraw from courses');
   }
-  const user = await userRepository.findByEmail(actor.email);
-  return await courseRepository.removeStudent(courseId, user._id);
+  const userId = await idFromActor(actor);
+  const result = await courseRepository.removeStudent(courseId, userId);
+
+  auditService.record({
+    actor, action: 'course_withdrawn', entityType: 'Course', entityId: courseId, metadata: {
+      studentId: userId
+    }
+  });
+
+  return result;
 }
 
 module.exports = {

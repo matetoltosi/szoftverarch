@@ -1,19 +1,115 @@
 <h2>Upload Document</h2>
 
 <form id="docForm" enctype="multipart/form-data">
-  <input type="file" name="document" required>
+  <select name="type" required>
+    <option value="">Select type</option>
+    <option value="certificate">Certificate</option>
+    <option value="request">Request</option>
+    <option value="other">Other</option>
+  </select>
+
+  <textarea name="text" placeholder="Optional description"></textarea>
+
+  <input type="file" name="file">
+
   <button>Upload</button>
 </form>
+
+<h2>My Uploaded Documents</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Text</th>
+      <th>File</th>
+      <th>Status</th>
+      <th>Uploaded</th>
+      <th>Download</th>
+    </tr>
+  </thead>
+  <tbody id="documentsTable"></tbody>
+</table>
+
+<style>
+  .status-submitted {
+    color: #856404;
+    background-color: #fff3cd;
+  }
+
+  .status-approved {
+    color: #155724;
+    background-color: #d4edda;
+  }
+
+  .status-rejected {
+    color: #721c24;
+    background-color: #f8d7da;
+  }
+
+  table td {
+    padding: 6px;
+  }
+</style>
 
 <script>
 document.getElementById('docForm')
   .addEventListener('submit', async e => {
     e.preventDefault();
+
     const formData = new FormData(e.target);
 
-    await fetch('/api/student/documents', {
+    const res = await fetch('/api/student/documents', {
       method: 'POST',
       body: formData
     });
+
+    if (!res.ok) {
+      alert('Upload failed');
+    } else {
+      alert('Document submitted');
+      e.target.reset();
+    }
+
+    loadDocuments();
   });
+
+async function loadDocuments() {
+  const res = await fetch('/api/student/documents');
+  if (!res.ok) {
+    alert('Failed to load documents');
+    return;
+  }
+
+  const documents = await res.json();
+  const tbody = document.getElementById('documentsTable');
+  tbody.innerHTML = '';
+
+  if (documents.length === 0) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td colspan="5">No documents uploaded yet.</td>
+    `;
+    tbody.appendChild(row);
+    return;
+  }
+
+  documents.forEach(doc => {
+    const row = document.createElement('tr');
+    row.className = `status-${doc.status}`;
+
+    row.innerHTML = `
+      <td>${doc.type}</td>
+      <td>${doc.text || '-'}</td>
+      <td>${doc.filePath ? 'Uploaded' : '-'}</td>
+      <td>${doc.status}</td>
+      <td>${new Date(doc.uploadedAt).toLocaleString()}</td>
+      <td><a href="/api/student/documents/${doc._id}"">Download</a></td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
+
+loadDocuments();
 </script>

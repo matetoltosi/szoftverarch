@@ -1,4 +1,4 @@
-const userRepository = require('../../data_access/repositories/user_repository');
+const userRepository = require('../data_access/repositories/user_repository');
 
 async function authenticate(email, password) {
   const user = await userRepository.findByEmail(email);

@@ -3,53 +3,58 @@
 <table>
   <thead>
     <tr>
-      <th>Document ID</th>
       <th>Student</th>
-      <th>Title</th>
-      <th>Actions</th>
+      <th>Type</th>
+      <th>Text</th>
+      <th>File</th>
+      <th>Status</th>
+      <th>Uploaded</th>
+      <th>Download</th>
+      <th>Action</th>
     </tr>
   </thead>
-  <tbody>
-
-  </tbody>
+  <tbody id="docTable"></tbody>
 </table>
 
 <script>
-  async function fetchDocuments() {
-    const res = await fetch('/api/admin/documents');
-    const docs = await res.json();
+async function loadDocuments() {
+  const res = await fetch('/api/admin/documents');
+  const docs = await res.json();
 
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
+  const tbody = document.getElementById('docTable');
+  tbody.innerHTML = '';
 
-    docs.forEach(doc => {
-      const row = document.createElement('tr');
+  docs.forEach(doc => {
+    const actions =
+      doc.status === 'submitted'
+        ? `
+          <button onclick="review('${doc._id}','approve')">Approve</button>
+          <button onclick="review('${doc._id}','reject')">Reject</button>
+        `
+        : '';
 
-      const actions =
-        doc.status === 'submitted'
-          ? `
-            <button onclick="review('${doc._id}','approved')">Approve</button>
-            <button onclick="review('${doc._id}','rejected')">Reject</button>
-          `
-          : '';
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${doc.studentId.email}</td>
+      <td>${doc.type}</td>
+      <td>${doc.text || '-'}</td>
+      <td>${doc.filePath ? 'Uploaded' : '-'}</td>
+      <td>${doc.status}</td>
+      <td>${new Date(doc.uploadedAt).toLocaleString()}</td>
+      <td><a href="/api/admin/documents/${doc._id}"">Download</a></td>
+      <td>${actions}</td>
+    `;
 
-      row.innerHTML = `
-        <td>${doc.studentId.email}</td>
-        <td>${doc.filename}</td>
-        <td>${doc.status}</td>
-        <td>${actions}</td>
-      `;
+    tbody.appendChild(row);
+  });
+}
 
-      tbody.appendChild(row);
-    });
-  }
+async function review(id, action) {
+  await fetch(`/api/admin/documents/${id}/${action}`, {
+    method: 'PUT'
+  });
+  loadDocuments();
+}
 
-  async function review(id, status) {
-    await fetch(`/api/admin/documents/${id}/${status}`, {
-      method: 'PUT'
-    });
-    fetchDocuments();
-  }
-
-  fetchDocuments();
+loadDocuments();
 </script>
