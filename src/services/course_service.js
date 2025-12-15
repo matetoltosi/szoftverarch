@@ -22,11 +22,39 @@ async function create(actor, { name, subjectId }) {
     subjectId
   });
 
-  auditService.record({
+  await auditService.record({
     actor, action: 'course_created', entityType: 'Course', entityId: course._id
   });
 
   return course;
+}
+
+async function update(actor, courseId, data) {
+  if (actor.role !== 'teacher') {
+    throw new Error('Fordbidden');
+  }
+
+  const result = await courseRepository.update(courseId, { name: data.name?.trim() });
+
+  auditService.record({
+    actor, action: 'course_updated', entityType: 'Course', entityId: courseId
+  });
+
+  return result;
+}
+
+async function remove(actor, courseId) {
+  if (actor.role !== 'teacher') {
+    throw new Error('Fordbidden');
+  }
+
+  const result = await courseRepository.remove(courseId);
+
+  auditService.record({
+    actor, action: 'course_removed', entityType: 'Course', entityId: courseId
+  });
+
+  return result;
 }
 
 async function listAll() {
@@ -83,6 +111,8 @@ async function withdraw(actor, courseId) {
 
 module.exports = {
   create,
+  update,
+  remove,
   listAll,
   listForStudent,
   apply,

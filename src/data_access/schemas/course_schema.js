@@ -10,7 +10,11 @@ const CourseSchema = new mongoose.Schema({
   appliedStudents: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  active: {
+    type: Boolean,
+    default: true
+  }
 });
 
 module.exports = mongoose.model('Course', CourseSchema);

@@ -10,31 +10,31 @@ router.get('/dashboard', requireAuth('student'), (req, res) => {
   });
 });
 
-router.get('/apply-course', requireAuth('student'), (req, res) => {
+router.get('/courses', requireAuth('student'), (req, res) => {
   res.render('main', {
     title: 'Apply for Course',
-    body: 'student/apply-course',
+    body: 'student/courses',
   });
 });
 
-router.get('/apply-exam', requireAuth('student'), (req, res) => {
+router.get('/exams', requireAuth('student'), (req, res) => {
   res.render('main', {
     title: 'Apply for Exam',
-    body: 'student/apply-exam',
+    body: 'student/exams',
   });
 });
 
-router.get('/upload-document', requireAuth('student'), (req, res) => {
+router.get('/documents', requireAuth('student'), (req, res) => {
   res.render('main', {
     title: 'Upload Document',
-    body: 'student/uppload-document',
+    body: 'student/documents',
   });
 });
 
-router.get('/pay-fees', requireAuth('student'), (req, res) => {
+router.get('/fees', requireAuth('student'), (req, res) => {
   res.render('main', {
     title: 'Pay Fees',
-    body: 'student/pay-fees',
+    body: 'student/fees',
   });
 });
 

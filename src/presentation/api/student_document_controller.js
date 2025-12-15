@@ -19,7 +19,6 @@ router.get('/documents', requireAuth('student'), async (req, res) => {
 
 router.post('/documents', requireAuth('student'), upload.single('file'), async (req, res) => {
   try {
-    console.log(req.body)
     await documentService.submit(req.session.user, {
       type: req.body.type,
       text: req.body.text,

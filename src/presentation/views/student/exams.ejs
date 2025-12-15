@@ -7,6 +7,7 @@
       <th>Subject</th>
       <th>Date</th>
       <th>Status</th>
+      <th>Grade</thth>
       <th>Action</th>
     </tr>
   </thead>
@@ -35,14 +36,10 @@
           <td>${exam.subject}</td>
           <td>${exam.date ? new Date(exam.date).toLocaleDateString() : '-'}</td>
           <td>${exam.applied ? 'Applied' : 'Not applied'}</td>
-          <td>
-            ${
-              exam.applied
-                ? `<button onclick="withdraw('${exam._id}')">Withdraw</button>`
-                : `<button onclick="apply('${exam._id}')">Apply</button>`
-            }
-          </td>
-        `;
+          <td>${exam.grade !== null ? `Grade: ${exam.grade}` : 'Not graded'} </td>
+          <td>${exam.applied
+            ? `<button onclick="withdraw('${exam._id}')">Withdraw</button>`
+            : `<button onclick="apply('${exam._id}')">Apply</button>`}</td>`;
 
         tbody.appendChild(row);
       });

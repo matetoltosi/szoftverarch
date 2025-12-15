@@ -10,24 +10,24 @@ router.get('/dashboard', requireAuth('admin'), (req, res) => {
   });
 });
 
-router.get('/manage-subjects', requireAuth('admin'), (req, res) => {
+router.get('/subjects', requireAuth('admin'), (req, res) => {
   res.render('main', {
     title: 'Manage Subjects',
-    body: 'admin/manage-subjects',
+    body: 'admin/subjects',
   });
 });
 
-router.get('/review-documents', requireAuth('admin'), (req, res) => {
+router.get('/documents', requireAuth('admin'), (req, res) => {
   res.render('main', {
     title: 'Review Documents',
-    body: 'admin/review-documents',
+    body: 'admin/documents',
   });
 });
 
-router.get('/manage-fees', requireAuth('admin'), (req, res) => {
+router.get('/fees', requireAuth('admin'), (req, res) => {
   res.render('main', {
     title: 'Manage Fees',
-    body: 'admin/manage-fees',
+    body: 'admin/fees',
   });
 });
 

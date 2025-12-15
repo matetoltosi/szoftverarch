@@ -10,17 +10,17 @@ router.get('/dashboard', requireAuth('teacher'), (req, res) => {
   });
 });
 
-router.get('/manage-courses', requireAuth('teacher'), (req, res) => {
+router.get('/courses', requireAuth('teacher'), (req, res) => {
   res.render('main', {
     title: 'Manage Courses',
-    body: 'teacher/manage-courses',
+    body: 'teacher/courses',
   });
 });
 
-router.get('/manage-exams', requireAuth('teacher'), (req, res) => {
+router.get('/exams', requireAuth('teacher'), (req, res) => {
   res.render('main', {
     title: 'Manage Exams',
-    body: 'teacher/manage-exams',
+    body: 'teacher/exams',
   });
 });
 

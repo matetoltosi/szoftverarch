@@ -15,7 +15,6 @@
       <th>Student</th>
       <th>Amount</th>
       <th>Status</th>
-      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -33,13 +32,12 @@
 
     fees.forEach(fee => {
       const row = document.createElement('tr');
+      console.log(fee);
       row.innerHTML = `
         <td>${fee._id}</td>
-        <td>${fee.studentEmail}</td>
+        <td>${fee.studentId.email}</td>
         <td>${fee.amount}</td>
         <td>${fee.status}</td>
-        <td>
-        </td>
       `;
       tbody.appendChild(row);
     });

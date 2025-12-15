@@ -22,4 +22,44 @@ router.post('/exams', requireAuth('teacher'), async (req, res) => {
   }
 });
 
+router.put('/exams/:id', requireAuth('teacher'), async (req, res) => {
+  try {
+    const course = await examService.update(req.session.user, req.params.id, req.body);
+    res.status(201).json(course);
+  }
+  catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete('/exams/:id', requireAuth('teacher'), async (req, res) => {
+  try {
+    await examService.remove(req.session.user, req.params.id);
+    res.sendStatus(204);
+  }
+  catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get('/exams/:id/results', requireAuth('teacher'), async (req, res) => {
+    try {
+      const data = await examService.listResultsForTeacher(req.session.user, req.params.id);
+      res.json(data);
+    } catch (err) {
+      res.status(404).json({ error: err.message });
+    }
+  }
+);
+
+router.put('/exams/:id/results/:studentId', requireAuth('teacher'), async (req, res) => {
+  try {
+    const course = await examService.grade(req.session.user, req.params.id, req.params.studentId, req.body.grade);
+    res.sendStatus(204);
+  }
+  catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = router;

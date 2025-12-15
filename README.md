@@ -15,5 +15,5 @@ Ez a konténerek indítása után monitorozni fogja azok kimeneteit, ebből a m�
 Ha a mongo-nak szeretnél kezdeti adathalmazt adni, használd az alábbi szkriptet:
 
 ```sh
-docker compose run app node src/data_access/seed.js
+docker compose run app node /app/src/data_access/seed.js
 ```

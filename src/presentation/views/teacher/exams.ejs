@@ -1,0 +1,205 @@
+<h2>Manage Exams</h2>
+
+<form id="examForm">
+  <input id="examName" placeholder="Exam name" required>
+  <input id="examDate" type="date" required>
+  <select id="examSubject"></select>
+  <button>Create Exam</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Subject</th>
+      <th>Grading</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="examTable"></tbody>
+</table>
+
+<style>
+.subtable {
+  width: 100%;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+}
+
+.subtable th, .subtable td {
+  padding: 6px;
+}
+
+button {
+  cursor: pointer;
+}
+</style>
+
+<script>
+  async function loadSubjects() {
+    const res = await fetch('/api/teacher/subjects');
+    const subjects = await res.json();
+    const select = document.getElementById('examSubject');
+    select.innerHTML = '';
+    subjects.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s._id;
+      opt.textContent = s.name;
+      select.appendChild(opt);
+    });
+  }
+
+  async function loadExams() {
+    const res = await fetch('/api/teacher/exams');
+    const exams = await res.json();
+    const tbody = document.getElementById('examTable');
+    tbody.innerHTML = '';
+
+    exams.forEach(exam => {
+      const row = document.createElement('tr');
+
+      const actions = exam.active
+      ? `
+        <button onclick="editExam('${exam._id}', '${exam.name}', '${exam.date}')">Edit</button>
+        <button onclick="deleteExam('${exam._id}')">Delete</button>
+      `
+      : ''
+      
+      row.innerHTML = `
+        <td>${exam.name}</td>
+        <td>${exam.subjectId.name}</td>
+        <td><button onclick="toggleGrades('${exam._id}', this)">Grade</button></td>
+        <td>${actions}</td>
+      `;
+
+      if (!exam.active) {
+        row.style.backgroundColor = '#f8d7da';
+      }
+
+      tbody.appendChild(row);
+
+      const gradeRow = document.createElement('tr');
+      gradeRow.id = `grades-${exam._id}`;
+      gradeRow.style.display = 'none';
+      gradeRow.innerHTML = `
+        <td colspan="3">
+          <table class="subtable">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Grade (1–5)</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="grades-body-${exam._id}">
+              <tr><td colspan="3">Loading...</td></tr>
+            </tbody>
+          </table>
+        </td>
+      `;
+      tbody.appendChild(gradeRow);
+    });
+  }
+
+  async function editExam(id, oldName, oldDate) {
+    const name = prompt('New exam name:', oldName);
+    if (!name) return;
+
+    await fetch(`/api/teacher/exams/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+  }
+
+  async function deleteExam(id) {
+    await fetch(`/api/teacher/exams/${id}`, { method: 'DELETE' });
+    loadCourses();
+  }
+
+  document.getElementById('examForm')
+    .addEventListener('submit', async e => {
+      e.preventDefault();
+
+      await fetch('/api/teacher/exams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: examName.value,
+          subjectId: examSubject.value,
+          date: examDate.value
+        })
+      });
+
+      examName.value = '';
+      loadExams();
+    }
+  );
+
+  async function toggleGrades(examId, button) {
+    const row = document.getElementById(`grades-${examId}`);
+
+    if (row.style.display === 'none') {
+      row.style.display = '';
+      button.textContent = 'Grade ▲';
+      await loadGrades(examId);
+    } else {
+      row.style.display = 'none';
+      button.textContent = 'Grade ▼';
+    }
+  }
+
+  async function loadGrades(examId) {
+    const res = await fetch(`/api/teacher/exams/${examId}/results`);
+    const data = await res.json();
+
+    const tbody = document.getElementById(`grades-body-${examId}`);
+    tbody.innerHTML = '';
+
+    if (data.students.length === 0) {
+      tbody.innerHTML =
+        `<tr><td colspan="3">No students applied</td></tr>`;
+      return;
+    }
+
+    data.students.forEach(s => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${s.email}</td>
+        <td>
+          <input type="number"
+                min="1" max="5"
+                value="${s.grade ?? ''}"
+                id="grade-${examId}-${s.studentId}">
+        </td>
+        <td>
+          <button onclick="saveGrade('${examId}', '${s.studentId}')">
+            Save
+          </button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  async function saveGrade(examId, studentId) {
+    const input =
+      document.getElementById(`grade-${examId}-${studentId}`);
+
+    const grade = input.value;
+
+    await fetch(
+      `/api/teacher/exams/${examId}/results/${studentId}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grade })
+      }
+    );
+
+    input.style.backgroundColor = '#d4edda'; // visual feedback
+  }
+
+  loadSubjects();
+  loadExams();
+</script>

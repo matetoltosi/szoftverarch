@@ -4,6 +4,10 @@ function create(data) {
   return Exam.create(data);
 }
 
+function update(id, data) {
+  return Exam.findByIdAndUpdate(id, data, { new: true });
+}
+
 function findAllPopulated() {
   return Exam.find()
     .populate('subjectId', 'name')
@@ -18,10 +22,17 @@ function findByCourse(courseId) {
   return Exam.find({ courseId }).lean();
 }
 
+function findByIdWithResults(examId) {
+  return Exam.findById(examId)
+    .populate('subjectId', 'name')
+    .populate('results.studentId', 'email')
+    .lean();
+}
+
 function addStudent(examId, studentId) {
   return Exam.findByIdAndUpdate(
     examId,
-    { $addToSet: { appliedStudents: studentId } },
+    { $addToSet: { results: { studentId, grade: null } } },
     { new: true }
   ).lean();
 }
@@ -29,21 +40,29 @@ function addStudent(examId, studentId) {
 function removeStudent(examId, studentId) {
   return Exam.findByIdAndUpdate(
     examId,
-    { $pull: { appliedStudents: studentId } },
+    { $pull: { results: { studentId } } },
     { new: true }
   ).lean();
 }
 
+function setGrade(examId, studentId, grade) {
+  return Exam.updateOne({ _id: examId, 'results.studentId': studentId },
+  { $set: {'results.$.grade': grade} });
+}
+
 function remove(id) {
-  return Exam.findByIdAndDelete(id).lean();
+  return Exam.findByIdAndUpdate(id, { active: false }).lean();
 }
 
 module.exports = {
   create,
+  update,
+  remove,
   findAllPopulated,
   findBySubject,
   findByCourse,
+  findByIdWithResults,
   addStudent,
   removeStudent,
-  remove
+  setGrade
 };

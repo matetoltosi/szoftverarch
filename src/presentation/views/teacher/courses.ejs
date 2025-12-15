@@ -1,0 +1,101 @@
+<h2>Manage Courses</h2>
+
+<form id="courseForm">
+  <input id="courseName" placeholder="Course name" required>
+  <select id="courseSubject"></select>
+  <button>Create Course</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Subject</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="courseTable"></tbody>
+</table>
+
+<script>
+  async function loadSubjects() {
+    const res = await fetch('/api/teacher/subjects');
+    const subjects = await res.json();
+    const select = document.getElementById('courseSubject');
+    select.innerHTML = '';
+    subjects.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s._id;
+      opt.textContent = s.name;
+      select.appendChild(opt);
+    });
+  }
+
+  async function loadCourses() {
+    const res = await fetch('/api/teacher/courses');
+    const courses = await res.json();
+    const tbody = document.getElementById('courseTable');
+    tbody.innerHTML = '';
+
+    courses.forEach(course => {
+      const row = document.createElement('tr');
+
+      const actions = course.active
+        ? `
+          <button onclick="editCourse('${course._id}', '${course.name}')">Edit</button>
+          <button onclick="deleteCourse('${course._id}')">Delete</button>
+        `
+        : '';
+
+      row.innerHTML = `
+        <td>${course.name}</td>
+        <td>${course.subjectId.name}</td>
+        <td>${actions}</td>
+      `;
+
+      if (!course.active) {
+        row.style.backgroundColor = '#f8d7da';
+      }
+
+      tbody.appendChild(row);
+    });
+  }
+
+  async function editCourse(id, oldName) {
+    const name = prompt('New course name:', oldName);
+    if (!name) return;
+
+    await fetch(`/api/teacher/courses/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+
+    loadCourses();
+  }
+
+  async function deleteCourse(id) {
+    await fetch(`/api/teacher/courses/${id}`, { method: 'DELETE' });
+    loadCourses();
+  }
+
+  document.getElementById('courseForm')
+    .addEventListener('submit', async e => {
+      e.preventDefault();
+
+      await fetch('/api/teacher/courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: courseName.value,
+          subjectId: courseSubject.value
+        })
+      });
+
+      courseName.value = '';
+      loadCourses();
+    });
+
+  loadSubjects();
+  loadCourses();
+</script>

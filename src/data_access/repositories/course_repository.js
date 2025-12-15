@@ -4,6 +4,10 @@ function create(data) {
   return Course.create(data);
 }
 
+function update(id, data) {
+  return Course.findByIdAndUpdate(id, data, { new: true });
+}
+
 function findBySubject(subjectId) {
   return Course.find({ subjectId }).lean();
 }
@@ -35,15 +39,16 @@ function removeStudent(courseId, studentId) {
 }
 
 function remove(id) {
-  return Course.findByIdAndDelete(id);
+  return Course.findByIdAndUpdate(id, { active: false }).lean();
 }
 
 module.exports = {
   create,
+  update,
+  remove,
   findBySubject,
   findById,
   findAllPopulated,
   addStudent,
-  removeStudent,
-  remove
+  removeStudent
 };
